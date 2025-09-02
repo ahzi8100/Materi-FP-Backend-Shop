@@ -20,7 +20,7 @@
                                 </td>
                                 <td style="width: 1%">:</td>
                                 <td>
-                                    {{ $invoice->invoice }}
+                                    {{ $order->invoice }}
                                 </td>
                             </tr>
                             <tr>
@@ -29,7 +29,7 @@
                                 </td>
                                 <td>:</td>
                                 <td>
-                                    {{ $invoice->name }}
+                                    {{ $order->name }}
                                 </td>
                             </tr>
                             <tr>
@@ -38,7 +38,7 @@
                                 </td>
                                 <td>:</td>
                                 <td>
-                                    {{ $invoice->phone }}
+                                    {{ $order->phone }}
                                 </td>
                             </tr>
                             <tr>
@@ -47,8 +47,8 @@
                                 </td>
                                 <td>:</td>
                                 <td>
-                                    {{ $invoice->courier }} / {{ $invoice->service }} /
-                                    {{ Number::currency($invoice->cost_courier, in: 'IDR', locale: 'id') }}
+                                    {{ $order->courier }} / {{ $order->service }} /
+                                    {{ Number::currency($order->cost_courier, in: 'IDR', locale: 'id') }}
                                 </td>
                             </tr>
                             <tr>
@@ -57,7 +57,7 @@
                                 </td>
                                 <td>:</td>
                                 <td>
-                                    {{ $invoice->address }}
+                                    {{ $order->address }}
                                 </td>
                             </tr>
                             <tr>
@@ -66,7 +66,7 @@
                                 </td>
                                 <td>:</td>
                                 <td>
-                                    {{ Number::currency($invoice->grand_total, in: 'IDR', locale: 'id') }}
+                                    {{ Number::currency($order->grand_total, in: 'IDR', locale: 'id') }}
                                 </td>
                             </tr>
                             <tr>
@@ -75,7 +75,7 @@
                                 </td>
                                 <td>:</td>
                                 <td>
-                                    {{ $invoice->status }}
+                                    {{ $order->status }}
                                 </td>
                             </tr>
                         </table>
@@ -90,11 +90,12 @@
                             style="border-style: solid !important;border-color: rgb(198, 206, 214) !important;">
                             <tbody>
 
-                                @foreach ($invoice->orders()->get() as $product)
+                                @foreach ($order->orders()->get() as $product)
                                     <tr style="background: #edf2f7;">
                                         <td class="b-none" width="25%">
                                             <div class="wrapper-image-cart">
-                                                <img src="{{ $product->image }}" style="width: 100%;border-radius: .5rem">
+                                                <img src="{{ 'http://test-backend-shop.test/storage/products/' . $product->image }}"
+                                                    style="width: 100%;border-radius: .5rem">
                                             </div>
                                         </td>
                                         <td class="b-none" width="50%">
@@ -108,7 +109,8 @@
                                             </table>
                                         </td>
                                         <td class="b-none text-right">
-                                            <p class="m-0 font-weight-bold">{{ Number::currency($product->price, in: 'IDR', locale: 'id') }}</p>
+                                            <p class="m-0 font-weight-bold">
+                                                {{ Number::currency($product->price, in: 'IDR', locale: 'id') }}</p>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -123,4 +125,3 @@
 
     </div>
 @endsection
-

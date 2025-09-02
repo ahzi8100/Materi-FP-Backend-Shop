@@ -20,8 +20,8 @@ class OrderController extends Controller
         return view('admin.order.index', compact('invoices'));
     }
 
-    public function show(Invoice $invoice)
+    public function show(Invoice $order)
     {
-        return view('admin.order.show', compact('invoice'));
+        return view('admin.order.show', compact('order'));
     }
 }

@@ -44,8 +44,8 @@
                                                 {{ ++$no + ($invoices->currentPage() - 1) * $invoices->perPage() }}</th>
                                             <td>{{ $invoice->invoice }}</td>
                                             <td>{{ $invoice->name }}</td>
-                                            <td class="text-center">{{ $invoice->status }}</td>
                                             <td>{{ Number::currency($invoice->grand_total, in: 'IDR', locale: 'id') }}</td>
+                                            <td class="text-center">{{ $invoice->status }}</td>
                                             <td class="text-center">
                                                 <a href="{{ route('admin.order.show', $invoice->id) }}"
                                                     class="btn btn-sm btn-primary">
