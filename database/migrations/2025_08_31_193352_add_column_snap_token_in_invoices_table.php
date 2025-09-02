@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sliders', function (Blueprint $table) {
-            $table->id();
-            $table->string('image');
-            $table->string('title');
-            $table->string('description');
-            $table->string('link');
-            $table->timestamps();
+        Schema::table('invoices', function (Blueprint $table) {
+            $table->string('snap_token')->nullable()->after('status');
         });
     }
 
@@ -26,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sliders');
+        Schema::table('invoices', function (Blueprint $table) {
+            $table->dropColumn('snap_token');
+        });
     }
 };
+

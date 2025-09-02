@@ -32,6 +32,8 @@ class SliderController extends Controller
         //save to DB
         $slider = Slider::create([
             'image'  => $image->hashName(),
+            'title'  => $request->title,
+            'description' => $request->description,
             'link'   => $request->link
         ]);
 

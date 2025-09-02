@@ -26,7 +26,29 @@
                                         {{ $message }}
                                     </div>
                                 @enderror
+                            </div>
+                            <div class="form-group">
+                                <label>TITLE</label>
+                                <input type="text" name="title"
+                                    class="form-control @error('title') is-invalid @enderror">
 
+                                @error('title')
+                                    <div class="invalid-feedback" style="display: block">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label>DESCRIPTION</label>
+                                <input type="text" name="description"
+                                    class="form-control @error('description') is-invalid @enderror">
+
+                                @error('description')
+                                    <div class="invalid-feedback" style="display: block">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
 
                             <div class="form-group">
@@ -63,6 +85,8 @@
                                     <tr>
                                         <th scope="col" style="text-align: center;width: 6%">NO.</th>
                                         <th scope="col">GAMBAR</th>
+                                        <th scope="col">TITLE</th>
+                                        <th scope="col">DESCRIPTION</th>
                                         <th scope="col">LINK</th>
                                         <th scope="col" style="width: 15%;text-align: center">AKSI</th>
                                     </tr>
@@ -73,8 +97,11 @@
                                             <th scope="row" style="text-align: center">
                                                 {{ ++$no + ($sliders->currentPage() - 1) * $sliders->perPage() }}</th>
                                             <td class="text-center">
-                                                <img src="{{ asset('storage/sliders/' . $slider->image) }}" class="rounded" style="width:200px">
+                                                <img src="{{ asset('storage/sliders/' . $slider->image) }}" class="rounded"
+                                                    style="width:200px">
                                             </td>
+                                            <td>{{ $slider->title }}</td>
+                                            <td>{{ $slider->description }}</td>
                                             <td>{{ $slider->link }}</td>
                                             <td class="text-center">
                                                 <a href="{{ route('admin.slider.destroy', $slider->id) }}"
@@ -101,4 +128,3 @@
 
     </div>
 @endsection
-
