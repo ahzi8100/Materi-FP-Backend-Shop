@@ -22,7 +22,7 @@ class CheckoutController extends Controller
      */
     public function __construct(Request $request)
     {
-        // dd($request->all());
+        // Fungsi ini berjalan setiap kali controller ini dipanggil. Tujuannya adalah untuk melakukan persiapan awal.
         $this->request = $request;
         // Set midtrans configuration
         \Midtrans\Config::$serverKey    = config('services.midtrans.serverKey');
@@ -35,12 +35,10 @@ class CheckoutController extends Controller
     {
         DB::transaction(function () {
 
-            /**
-             * algorithm create no invoice
-             */
+            // Membuat Nomor Invoice Unik:
             $length = 10;
             $random = '';
-            for ($i = 0; $i < $length; $i++) {
+            for ($i = 0; $i < $length; $i++) { // loop untuk membuat string acak
                 $random .= rand(0, 1) ? rand(0, 9) : chr(rand(ord('a'), ord('z')));
             }
 
@@ -60,10 +58,11 @@ class CheckoutController extends Controller
                 'status'        => 'pending',
             ]);
 
-            foreach (Cart::where('customer_id', Auth::user()->id)->get() as $cart) {
+            $carts = Cart::with('product')->where('customer_id', Auth::user()->id)->get();
+            $orders = [];
 
-                //insert product ke table order
-                $invoice->orders()->create([
+            foreach ($carts as $cart) {
+                    $invoice->orders()->create([
                     'invoice_id'    => $invoice->id,
                     'invoice'       => $invoice->invoice,
                     'product_id'    => $cart->product_id,
@@ -72,9 +71,17 @@ class CheckoutController extends Controller
                     'qty'           => $cart->quantity,
                     'price'         => $cart->price,
                 ]);
+
+                $cart->product->decrement('stock', $cart->quantity);
             }
 
-            // Buat transaksi ke midtrans kemudian save snap tokennya.
+            // insert product ke table order
+            $invoice->orders()->createMany($orders);
+
+            // hapus semua product di cart
+            Cart::where('customer_id', Auth::user()->id)->delete();
+
+            // Menyiapkan data untuk membuat transaksi ke midtrans kemudian save snap tokennya.
             $payload = [
                 'transaction_details' => [
                     'order_id'      => $invoice->invoice,
@@ -88,12 +95,10 @@ class CheckoutController extends Controller
                 ]
             ];
 
-            //create snap token
+            //buat transaksi ke midtrans dengan meminta snap token (sesi pembayaran midtrans)
             $snapToken = Snap::getSnapToken($payload);
             $invoice->snap_token = $snapToken;
             $invoice->save();
-
-            // $this->response['snap_token'] = $snapToken;
 
             return response()->json([
                 'success' => true,
@@ -104,15 +109,14 @@ class CheckoutController extends Controller
     }
 
     /**
-     * notificationHandler
+     * notificationHandler (Menerima Notifikasi dari Midtrans)
      *
-     * @param  mixed $request
-     * @return void
+     * Metode ini TIDAK dipanggil oleh pengguna, melainkan oleh server Midtrans setelah status transaksi berubah.
      */
     public function notificationHandler(Request $request)
     {
-        $payload      = $request->getContent();
-        $notification = json_decode($payload);
+        $payload      = $request->getContent(); // Midtrans mengirimkan notifikasi dalam format JSON
+        $notification = json_decode($payload); // String JSON mentah tadi diubah menjadi sebuah objek PHP
 
         $validSignatureKey = hash("sha512", $notification->order_id . $notification->status_code . $notification->gross_amount . config('services.midtrans.serverKey'));
 
@@ -136,6 +140,7 @@ class CheckoutController extends Controller
                 if ($fraud == 'challenge') {
 
                     /**
+                     *  artinya sistem pendeteksi penipuan
                      *   update invoice to pending
                      */
                     $data_transaction->update([
@@ -152,8 +157,8 @@ class CheckoutController extends Controller
                 }
             }
         } elseif ($transaction == 'settlement') {
-
             /**
+             * untuk metode pembayaran lain seperti transfer bank atau e-wallet
              *   update invoice to success
              */
             $data_transaction->update([
