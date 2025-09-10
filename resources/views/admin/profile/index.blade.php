@@ -35,8 +35,8 @@
 
         <!-- Page Heading -->
         <div class="row">
+            {{-- Section Two Factor Authentication --}}
             @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::twoFactorAuthentication()))
-
                 <div class="col-md-5 mb-5">
                     <div class="card border-0 shadow">
                         <div class="card-header bg-primary text-white">
@@ -102,10 +102,10 @@
                         </div>
                     </div>
                 </div>
-
             @endif
 
             <div class="col-md-7">
+                {{-- Section Edit Profile --}}
                 <div class="card border-0 shadow">
                     <div class="card-header bg-primary text-white">
                         <h6 class="m-0 font-weight-bold"><i class="fas fa-user-circle"></i> EDIT PROFILE</h6>
@@ -136,6 +136,7 @@
                     </div>
                 </div>
 
+                {{-- Section Update Password --}}
                 <div class="card border-0 shadow mt-3 mb-4">
                     <div class="card-header bg-primary text-white">
                         <h6 class="m-0 font-weight-bold"><i class="fas fa-unlock"></i> UPDATE PASSWORD</h6>
