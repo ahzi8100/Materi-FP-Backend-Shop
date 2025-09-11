@@ -44,7 +44,6 @@
                         </div>
 
                         <div class="card-body">
-
                             @if (!auth()->user()->two_factor_secret)
                                 {{-- Enable 2FA --}}
                                 <form method="POST" action="{{ url('user/two-factor-authentication') }}">
