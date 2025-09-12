@@ -33,7 +33,7 @@ class CheckoutController extends Controller
 
     public function store()
     {
-        DB::transaction(function () {
+        $snapToken = DB::transaction(function () {
 
             // Membuat Nomor Invoice Unik:
             $length = 10;
@@ -62,7 +62,7 @@ class CheckoutController extends Controller
             $orders = [];
 
             foreach ($carts as $cart) {
-                    $invoice->orders()->create([
+                $invoice->orders()->create([
                     'invoice_id'    => $invoice->id,
                     'invoice'       => $invoice->invoice,
                     'product_id'    => $cart->product_id,
@@ -96,16 +96,18 @@ class CheckoutController extends Controller
             ];
 
             //buat transaksi ke midtrans dengan meminta snap token (sesi pembayaran midtrans)
-            $snapToken = Snap::getSnapToken($payload);
-            $invoice->snap_token = $snapToken;
+            $snapTokenResult = Snap::getSnapToken($payload);
+            $invoice->snap_token = $snapTokenResult;
             $invoice->save();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Order Successfully',
-                'snap_token' => $snapToken
-            ]);
+            return $snapTokenResult;
         });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order Successfully',
+            'snap_token' => $snapToken,
+        ], 200);
     }
 
     /**
