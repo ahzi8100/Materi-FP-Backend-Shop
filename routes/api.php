@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart/total', [CartController::class, 'getCartTotal']);
     Route::get('/cart/totalWeight', [CartController::class, 'getCartTotalWeight']);
     Route::post('/cart/remove/{cart}', [CartController::class, 'removeCart']);
-    Route::post('/cart/removeAll', [CartController::class, 'removeAllCart']);
+    // Route::post('/cart/removeAll', [CartController::class, 'removeAllCart']);
 
     Route::post('/checkout', [CheckoutController::class, 'store']);
 

@@ -44,6 +44,7 @@ class CheckoutController extends Controller
 
             $no_invoice = 'INV-' . Str::upper($random);
 
+            // Insert Data ke Table Invoices
             $invoice = Invoice::create([
                 'invoice'       => $no_invoice,
                 'customer_id'   => Auth::user()->id,
@@ -58,11 +59,11 @@ class CheckoutController extends Controller
                 'status'        => 'pending',
             ]);
 
+            // Insert Data Cart ke Table Orders
             $carts = Cart::with('product')->where('customer_id', Auth::user()->id)->get();
             $orders = [];
-
             foreach ($carts as $cart) {
-                $invoice->orders()->create([
+                    $orders[] = [
                     'invoice_id'    => $invoice->id,
                     'invoice'       => $invoice->invoice,
                     'product_id'    => $cart->product_id,
@@ -70,7 +71,7 @@ class CheckoutController extends Controller
                     'image'         => $cart->product->image,
                     'qty'           => $cart->quantity,
                     'price'         => $cart->price,
-                ]);
+                ];
 
                 $cart->product->decrement('stock', $cart->quantity);
             }

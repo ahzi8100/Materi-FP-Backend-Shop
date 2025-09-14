@@ -49,7 +49,7 @@ class ProductController extends Controller
             'weight'         => 'required',
             'price'          => 'required',
             'stock'          => 'required',
-            'discount'       => 'required',
+            'discount'       => 'nullable',
         ]);
 
         //upload image
@@ -101,7 +101,7 @@ class ProductController extends Controller
             'weight'         => 'required',
             'stock'          => 'required',
             'price'          => 'required',
-            'discount'       => 'required',
+            'discount'       => 'nullable',
         ]);
 
         //cek jika image kosong
@@ -173,4 +173,3 @@ class ProductController extends Controller
         return redirect()->route('admin.product.index');
     }
 }
-
