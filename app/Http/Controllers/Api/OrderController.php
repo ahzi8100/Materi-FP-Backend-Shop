@@ -22,15 +22,13 @@ class OrderController extends Controller
 
     public function show($snap_token)
     {
-        $invoice = Invoice::where('customer_id', Auth::user()->id)->where('snap_token', $snap_token)->latest()->first();
+        $invoice = Invoice::with('orders')->where('customer_id', Auth::user()->id)->where('snap_token', $snap_token)->latest()->first();
 
         return response()->json([
             'success' => true,
             'message' => 'Detail Invoices: ' . Auth::user()->name,
             'data'    => $invoice,
-            'product' => $invoice->orders
+            // 'product' => $invoice->orders
         ], 200);
     }
 }
-
-
