@@ -34,7 +34,6 @@ class CartController extends Controller
             'quantity'    => 'required|integer|min:1'
         ]);
 
-        $userId = Auth::user()->id;
         $product = Product::findOrFail($request->product_id);
 
         // Hitung harga final setelah diskon
@@ -44,6 +43,7 @@ class CartController extends Controller
         }
 
         // cari item cart berdasarkan customer & produk
+        $userId = Auth::user()->id;
         $item = Cart::where('product_id', $product->id)
             ->where('customer_id', $userId)
             ->first();
