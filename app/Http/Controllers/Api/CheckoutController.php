@@ -44,6 +44,9 @@ class CheckoutController extends Controller
 
             $no_invoice = 'INV-' . Str::upper($random);
 
+            $total_weight = Cart::where('customer_id', Auth::user()->id)->sum('weight');
+            $total_cart = Cart::where('customer_id', Auth::user()->id)->sum('price');
+
             // Insert Data ke Table Invoices
             $invoice = Invoice::create([
                 'invoice'       => $no_invoice,
@@ -51,11 +54,11 @@ class CheckoutController extends Controller
                 'courier'       => $this->request->courier,
                 'service'       => $this->request->service,
                 'cost_courier'  => $this->request->cost_courier,
-                'weight'        => $this->request->weight,
+                'weight'        => $total_weight,
                 'name'          => $this->request->name,
                 'phone'         => $this->request->phone,
                 'address'       => $this->request->address,
-                'grand_total'   => $this->request->grand_total,
+                'grand_total'   => $total_cart + $this->request->cost_courier,
                 'status'        => 'pending',
             ]);
 
@@ -63,7 +66,7 @@ class CheckoutController extends Controller
             $carts = Cart::with('product')->where('customer_id', Auth::user()->id)->get();
             $orders = [];
             foreach ($carts as $cart) {
-                    $orders[] = [
+                $orders[] = [
                     'invoice_id'    => $invoice->id,
                     'invoice'       => $invoice->invoice,
                     'product_id'    => $cart->product_id,
